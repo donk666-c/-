@@ -32,11 +32,11 @@
    ```bash
    python image_flip.py images_folder -o flipped_images
    ```
-   说明：程序会读取 `images_folder` 中所有支持的图片文件，并保存到 `flipped_images` 文件夹中，文件名会自动加上 `_flipped` 后缀。
+   说明：程序会读取 `images_folder` 中所有支持的图片文件，并保存到 `flipped_images` 文件夹中，文件名会自动加上 `_flipped` 后缀。并且会在输出目录中额外生成一张 `comparison_page.png`，把所有“原图 + 翻转图”放在同一页中进行对照。
 5. 也可以直接调用函数：
    ```python
    from PIL import Image
-   from image_flip import flip_left_right, show_original_and_flipped, process_batch
+   from image_flip import flip_left_right, show_original_and_flipped, process_batch, create_comparison_page
 
    img = Image.open("input.jpg")
    flipped = flip_left_right(img)
@@ -45,10 +45,13 @@
    # 在屏幕中显示原始图和翻转后图
    show_original_and_flipped(img, output_path="output.jpg")
 
-   # 批量处理一整个目录
+   # 批量处理一整个目录，并生成汇总对照页
    process_batch("images_folder", "flipped_images")
+
+   # 直接生成一张对照页
+   comparison = create_comparison_page([(img, flipped)], "comparison_page.png")
    ```
 
 ## 说明
 
-`flip_left_right` 使用 PIL 的 `Image.FLIP_LEFT_RIGHT` 进行水平镜像处理，生成左右翻转后的图片。`show_original_and_flipped` 会把原图和翻转后图并排展示；如果当前环境没有图形界面，则会自动保存一张对比图，确保功能仍可用。`process_batch` 则允许批量处理一个目录中的多张图片。
+`flip_left_right` 使用 PIL 的 `Image.FLIP_LEFT_RIGHT` 进行水平镜像处理，生成左右翻转后的图片。`show_original_and_flipped` 会把原图和翻转后图并排展示；如果当前环境没有图形界面，则会自动保存一张对比图，确保功能仍可用。`process_batch` 则允许批量处理一个目录中的多张图片，并生成 `comparison_page.png` 汇总页，用于快速对照所有原图和翻转图。

@@ -1,7 +1,10 @@
+import tempfile
 import unittest
+from pathlib import Path
+
 from PIL import Image
 
-from image_flip import flip_left_right
+from image_flip import create_comparison_page, flip_left_right
 
 
 class TestImageFlip(unittest.TestCase):
@@ -23,6 +26,17 @@ class TestImageFlip(unittest.TestCase):
         self.assertEqual(flipped.getpixel((0, 1)), (255, 0, 255))
         self.assertEqual(flipped.getpixel((1, 1)), (0, 255, 255))
         self.assertEqual(flipped.getpixel((2, 1)), (255, 255, 0))
+
+    def test_create_comparison_page_saves_output(self):
+        img1 = Image.new("RGB", (20, 10), color="red")
+        img2 = Image.new("RGB", (20, 10), color="blue")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "comparison.png"
+            saved = create_comparison_page([(img1, img2)], output_path)
+            self.assertTrue(saved.exists())
+            self.assertGreater(Image.open(saved).size[0], 0)
+            self.assertGreater(Image.open(saved).size[1], 0)
 
 
 if __name__ == "__main__":
